@@ -1,3 +1,8 @@
+import os
+import sys
+
+sys.path.append(os.path.dirname(__file__))
+
 from stimulation_pulse import StimulationPulse
 import numpy as np
 

@@ -1,3 +1,8 @@
+import os
+import sys
+
+sys.path.append(os.path.dirname(__file__))
+
 from get_pulse import get_pulse
 from get_pulse import SEGMENT_PW, DURATION  ## overwrite if necessary
 
