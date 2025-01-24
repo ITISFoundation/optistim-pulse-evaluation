@@ -10,7 +10,7 @@ import json
 
 script_dir = pl.Path(__file__).parent
 sys.path.append(script_dir)
-
+print(sys.path)
 #
 
 from evaluation import evaluator
