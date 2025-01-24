@@ -10,7 +10,6 @@ import json
 
 script_dir = pl.Path(__file__).parent
 sys.path.append(script_dir)
-os.chdir(script_dir.parent)
 
 #
 
