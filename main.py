@@ -9,7 +9,7 @@ import json
 
 
 script_dir = pl.Path(__file__).parent
-sys.path.append(script_dir)
+sys.path.append(str(script_dir))
 print(sys.path)
 #
 
