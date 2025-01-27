@@ -8,6 +8,7 @@ import numpy as np
 
 SEGMENT_PW = 0.1  # Width, in ms, of 1 pulse segment
 DURATION = 1.0
+NVARS = int(DURATION / SEGMENT_PW) - 1
 
 
 def create_zero_mean_projection(xN1):
@@ -25,28 +26,22 @@ def create_zero_mean_projection(xN1):
     return xN
 
 
-def get_pulse(
-    *args, segment_pw: float = SEGMENT_PW, duration=DURATION, stds=None
-) -> StimulationPulse:
-    assert len(args) == (int(duration / segment_pw) - 1), (
+def get_pulse(*args, stds=None) -> StimulationPulse:
+    assert len(args) == NVARS, (
         "Number of arguments must match the duration of the pulse."
-        + f"Currently {len(args)} and {int(duration/segment_pw)-1}"
+        + f"Currently {len(args)} and {NVARS}"
     )
 
     pulse_object = StimulationPulse(None)
     pulse_object.name = "Free Pulse"
 
     amps = np.array(args)
-    # current_balanced_amplitudes = create_zero_mean_projection(amps)
-    # we will substract the mean from the pulse, to make it charge-balanced
-    current_balanced_amplitudes = (
-        amps  # no current balance -- check if SuMo gets better
-    )
+    current_balanced_amplitudes = create_zero_mean_projection(amps)
 
     # Create the pulse
     for i, amp in enumerate(current_balanced_amplitudes):
         std = stds[i] if stds is not None else None
-        pulse_object._insert_time_interval(amp, segment_pw, std=std)
+        pulse_object._insert_time_interval(amp, SEGMENT_PW, std=std)
 
     pulse_object.finish_pulse(DURATION)
 

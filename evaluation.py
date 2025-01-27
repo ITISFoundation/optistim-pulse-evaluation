@@ -3,11 +3,12 @@ import sys
 
 sys.path.append(os.path.dirname(__file__))
 
-from get_pulse import get_pulse
-from get_pulse import SEGMENT_PW, DURATION  ## overwrite if necessary
 
 import numpy as np
 from pathlib import Path
+from typing import Dict
+from get_pulse import get_pulse
+from get_pulse import SEGMENT_PW, DURATION, NVARS
 from s4l_neurofunctions.af.af_data_object import AFDataObject
 from s4l_neurofunctions.af.gaf_calculator import GAFCalculatorHomogeneous
 
@@ -31,7 +32,7 @@ deactivate_tqdm()
 afdataloaded = AFDataObject(af_type="AF").load(Path(__file__).parent)
 
 
-def model(**kwargs):
+def model(**kwargs: Dict[str, float]) -> Dict[str, float]:
     print(f"Evaluating Free Pulse for {kwargs}")
     params = [k for k in kwargs.values()]
     return {
@@ -39,6 +40,11 @@ def model(**kwargs):
         "energy": evaluate_energy(params),
         "maxamp": evaluate_maxamp(params),
     }
+
+
+model.__annotations__.pop("kwargs")
+model.__annotations__.update({f"p{i+1}": float for i in range(NVARS)})
+# TODO dynamically get outputs?
 
 
 def evaluate_maxamp(x) -> float:
@@ -70,3 +76,18 @@ def evaluate_energy(x) -> float:
     energy = [(i * 1e-3) ** 2 * R * (SEGMENT_PW * 1e-3) for i in pulse.amplitude_list]
     energy = sum(energy)
     return energy
+
+
+if __name__ == "__main__":
+    # def example(a: float, b:bool, s:str) -> (float, bool):
+    #     return None
+    #
+    # example.__annotations__
+    #    {'a': <class 'float'>, 'b': <class 'bool'>, 's': <class 'str'>, 'return': <class 'float'>}
+    #                                                                    'return': [<class 'float'>, <class 'bool'>]}
+    #
+    # isinstance(1.0, example.__annotations__["a"])
+    #     True
+
+    print(model.__annotations__)
+    print("DONE")
