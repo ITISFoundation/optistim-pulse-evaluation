@@ -31,7 +31,7 @@ deactivate_tqdm()
 afdataloaded = AFDataObject(af_type="AF").load(Path(__file__).parent)
 
 
-def evaluator(**kwargs):
+def model(**kwargs):
     print(f"Evaluating Free Pulse for {kwargs}")
     params = [k for k in kwargs.values()]
     return {

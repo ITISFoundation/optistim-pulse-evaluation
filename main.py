@@ -13,7 +13,7 @@ sys.path.append(str(script_dir))
 
 #
 
-from evaluation import evaluator
+from evaluation import model
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
 
     inputs = json.loads(input_file_path.read_text())
 
-    outputs = [evaluator(**input) for input in inputs]
+    outputs = [model(**input) for input in inputs]
 
     output_file_path.write_text(json.dumps(outputs))
 
