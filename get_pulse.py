@@ -3,8 +3,11 @@ import sys
 
 sys.path.append(os.path.dirname(__file__))
 
-from stimulation_pulse import StimulationPulse
 import numpy as np
+
+## dont wwanna integrate this changes in S4LNF and have to build a new wheel
+## therefore, keep using local file
+from stimulation_pulse import StimulationPulse
 
 SEGMENT_PW = 0.1  # Width, in ms, of 1 pulse segment
 DURATION = 1.0

@@ -32,7 +32,7 @@ deactivate_tqdm()
 afdataloaded = AFDataObject(af_type="AF").load(Path(__file__).parent)
 
 
-def model(**kwargs: Dict[str, float]) -> Dict[str, float]:
+def model(**kwargs):
     print(f"Evaluating Free Pulse for {kwargs}")
     params = [k for k in kwargs.values()]
     return {
@@ -42,18 +42,20 @@ def model(**kwargs: Dict[str, float]) -> Dict[str, float]:
     }
 
 
-model.__annotations__.pop("kwargs")
-model.__annotations__.update({f"p{i+1}": float for i in range(NVARS)})
-# TODO dynamically get outputs?
+model.__annotations__.update({"inputs": {f"p{i+1}": float for i in range(NVARS)}})
+model.__annotations__.update(
+    {"outputs": {"1-activation": float, "energy": float, "maxamp": float}}
+)  ## clearly custom-made annotations; do for now until we have the proper function database
+## Users will still need to define inputs & outputs of their python functions when adding them there
 
 
 def evaluate_maxamp(x) -> float:
-    pulse = get_pulse(*x, segment_pw=SEGMENT_PW, duration=DURATION)
+    pulse = get_pulse(*x)
     return np.max(np.abs(pulse.amplitude_list))
 
 
 def evaluate_activation(x) -> float:
-    pulse = get_pulse(*x, segment_pw=SEGMENT_PW, duration=DURATION)
+    pulse = get_pulse(*x)
 
     gafc = GAFCalculatorHomogeneous(dst=10)
     gafc.compute_gaf(
@@ -70,7 +72,7 @@ def evaluate_activation(x) -> float:
 
 
 def evaluate_energy(x) -> float:
-    pulse = get_pulse(*x, segment_pw=SEGMENT_PW, duration=DURATION)
+    pulse = get_pulse(*x)
     R = 1.2e3  # 1.2 kOhm -- from the model, +-1V generates 1.65mA
     ## total work = sum I^2 * R * dt
     energy = [(i * 1e-3) ** 2 * R * (SEGMENT_PW * 1e-3) for i in pulse.amplitude_list]
@@ -88,6 +90,6 @@ if __name__ == "__main__":
     #
     # isinstance(1.0, example.__annotations__["a"])
     #     True
-
     print(model.__annotations__)
+    print(model(**{f"p{i+1}": 0.0 for i in range(NVARS)}))
     print("DONE")
