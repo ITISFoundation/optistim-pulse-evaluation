@@ -36,7 +36,7 @@ def model(**kwargs):
     print(f"Evaluating Free Pulse for {kwargs}")
     params = [k for k in kwargs.values()]
     return {
-        "1-activation": evaluate_activation(params),
+        "activation": evaluate_activation(params),
         "energy": evaluate_energy(params),
         "maxamp": evaluate_maxamp(params),
     }
@@ -44,7 +44,7 @@ def model(**kwargs):
 
 model.__annotations__.update({"inputs": {f"p{i+1}": float for i in range(NVARS)}})
 model.__annotations__.update(
-    {"outputs": {"1-activation": float, "energy": float, "maxamp": float}}
+    {"outputs": {"activation": float, "energy": float, "maxamp": float}}
 )  ## clearly custom-made annotations; do for now until we have the proper function database
 ## Users will still need to define inputs & outputs of their python functions when adding them there
 
@@ -68,7 +68,7 @@ def evaluate_activation(x) -> float:
     gafpeaks = gafc.get_peaks().get_gaf_data()
     gafmax = gafpeaks.AF_max.values
     act = np.mean(sigmoid(gafmax, threshold=14.0, slope=2.0))  # type: ignore
-    return 1 - act  # type: ignore
+    return act
 
 
 def evaluate_energy(x) -> float:
@@ -81,15 +81,6 @@ def evaluate_energy(x) -> float:
 
 
 if __name__ == "__main__":
-    # def example(a: float, b:bool, s:str) -> (float, bool):
-    #     return None
-    #
-    # example.__annotations__
-    #    {'a': <class 'float'>, 'b': <class 'bool'>, 's': <class 'str'>, 'return': <class 'float'>}
-    #                                                                    'return': [<class 'float'>, <class 'bool'>]}
-    #
-    # isinstance(1.0, example.__annotations__["a"])
-    #     True
     print(model.__annotations__)
-    print(model(**{f"p{i+1}": 0.0 for i in range(NVARS)}))
+    print(model(**{f"p{i+1}": np.random.randn() for i in range(NVARS)}))
     print("DONE")

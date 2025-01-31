@@ -29,6 +29,14 @@ def create_zero_mean_projection(xN1):
     return xN
 
 
+## alternative option to the projection
+def remove_mean(xN1):
+    """Removes the mean from the input vector xN1."""
+    mean_value = np.mean(xN1)
+    xN = np.hstack([xN1 - mean_value, [0.0]])
+    return xN
+
+
 def get_pulse(*args, stds=None) -> StimulationPulse:
     assert len(args) == NVARS, (
         "Number of arguments must match the duration of the pulse."
