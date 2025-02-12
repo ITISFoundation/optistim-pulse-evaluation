@@ -9,45 +9,45 @@ import numpy as np
 ## therefore, keep using local file
 from stimulation_pulse import StimulationPulse
 
-SEGMENT_PW = 0.1  # Width, in ms, of 1 pulse segment
-DURATION = 1.0
-NVARS = int(DURATION / SEGMENT_PW) - 1
+DST = 100  ## number of time points in a ms -- must match (or be a divisor) of w GAFCalculator DST
+SEGMENT_PW = 1 / DST  # Width, in ms, of 1 pulse segment
+DURATION = 0.2
 
 
-def create_zero_mean_projection(xN1):
-    """Projects to a one-higher dimension in which the mean is always zero.
-    This should help make the inputs more independently meaninginful (instead of substracting the mean, depending on all others).
-    However, I fear it might be equivalent to substracting the mean.
-    In that case, simply try the alternative, appending a compensating pulse at the end, or simply removing the demeaning condition.
-    """
+def get_sinusoidal_pulse(*args) -> np.ndarray:
+    """From a series of A,B coeffs, generate a sum of sinusoids and cosines"""
+    assert len(args) % 2 == 0, "Number of arguments must be even."
+    N = len(args) // 2
+    assert N > 0, "At least one coefficient must be provided."
+    A = args[:N]
+    B = args[N:]
+    assert len(A) == len(B), "Number of A and B coefficients must match."
 
-    N = len(xN1) + 1
-    ones_N = np.ones((N, 1))
+    time_vector = np.linspace(0, DURATION, int(DURATION * DST))
+    amps = np.zeros_like(time_vector)
+    for j, (a, b) in enumerate(zip(A, B)):
+        omega = 2 * np.pi * j / DURATION
+        amps += a * np.cos(omega * time_vector) + b * np.sin(omega * time_vector)
 
-    P = np.eye(N) - 1 / N * (ones_N @ ones_N.T)
-    xN = P @ np.hstack([xN1, [0.0]])
-    return xN
-
-
-## alternative option to the projection
-def remove_mean(xN1):
-    """Removes the mean from the input vector xN1."""
-    mean_value = np.mean(xN1)
-    xN = np.hstack([xN1 - mean_value, [0.0]])
-    return xN
+    return amps
 
 
 def get_pulse(*args, stds=None) -> StimulationPulse:
-    assert len(args) == NVARS, (
-        "Number of arguments must match the duration of the pulse."
-        + f"Currently {len(args)} and {NVARS}"
-    )
 
     pulse_object = StimulationPulse(None)
-    pulse_object.name = "Free Pulse"
+    pulse_object.name = "Sum-of-Sinusoids Pulse"
 
-    amps = np.array(args)
-    current_balanced_amplitudes = create_zero_mean_projection(amps)
+    current_balanced_amplitudes = get_sinusoidal_pulse(*args)
+
+    if stds is not None:
+        assert len(stds) == len(current_balanced_amplitudes), (
+            "Number of stds must match the number of amplitudes."
+            + f"Currently {len(stds)} and {len(current_balanced_amplitudes)}"
+        )
+        ## TODO would I need to propagate the stds through the sinusoidal function?
+        # how to do that?
+        if not np.all(np.array(stds) == 0):
+            raise NotImplementedError("stds not implemented yet for sinusoidal pulses")
 
     # Create the pulse
     for i, amp in enumerate(current_balanced_amplitudes):
@@ -55,5 +55,13 @@ def get_pulse(*args, stds=None) -> StimulationPulse:
         pulse_object._insert_time_interval(amp, SEGMENT_PW, std=std)
 
     pulse_object.finish_pulse(DURATION)
+    if stds is None:
+        pulse_object.std_list = None
 
     return pulse_object
+
+
+if __name__ == "__main__":
+    pulse = get_pulse(*list(np.random.randn(30)))  # TESTING
+    pulse.plot_pulse(show=True)
+    print("Done")
