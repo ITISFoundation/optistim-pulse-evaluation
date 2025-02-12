@@ -8,7 +8,7 @@ import numpy as np
 from pathlib import Path
 from typing import Dict
 from get_pulse import get_pulse
-from get_pulse import SEGMENT_PW, DURATION, NVARS
+from get_pulse import SEGMENT_PW, DURATION, NVARS, DST
 from s4l_neurofunctions.af.af_data_object import AFDataObject
 from s4l_neurofunctions.af.gaf_calculator import GAFCalculatorHomogeneous
 
@@ -57,7 +57,7 @@ def evaluate_maxamp(x) -> float:
 def evaluate_activation(x) -> float:
     pulse = get_pulse(*x)
 
-    gafc = GAFCalculatorHomogeneous(dst=10)
+    gafc = GAFCalculatorHomogeneous(dst=DST)
     gafc.compute_gaf(
         afdataloaded,
         pulse,
