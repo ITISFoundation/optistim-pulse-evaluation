@@ -10,7 +10,7 @@ import numpy as np
 from stimulation_pulse import StimulationPulse
 
 SEGMENT_PW = 10e-3  # Width, in ms, of 1 pulse segment
-DST = 1 / SEGMENT_PW  # Points per unit of time (ms)
+DST = int(1 / SEGMENT_PW)  # Points per unit of time (ms)
 DURATION = 0.5  # Duration of the pulse, in ms
 NVARS = int(DURATION / SEGMENT_PW) - 1
 
