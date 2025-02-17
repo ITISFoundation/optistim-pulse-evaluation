@@ -44,11 +44,13 @@ def model(**kwargs):
     print(f"Evaluating Free Pulse for {kwargs}")
     params = [k for k in kwargs.values()]
 
-    return (
-        *evaluate_activation(params),
-        evaluate_energy(params),
-        evaluate_maxamp(params),
-    )
+    act, fsi = evaluate_activation(params)
+    return {
+        "activation": act,
+        "fsi": fsi,
+        "energy": evaluate_energy(params),
+        "maxamp": evaluate_maxamp(params),
+    }
 
 
 ## not defined a-priori in the sinusoid case
