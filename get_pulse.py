@@ -11,7 +11,7 @@ from stimulation_pulse import StimulationPulse
 
 DST = 100  ## number of time points in a ms -- must match (or be a divisor) of w GAFCalculator DST
 SEGMENT_PW = 1 / DST  # Width, in ms, of 1 pulse segment
-DURATION = 0.2
+DURATION = 1.0
 
 
 def get_sinusoidal_pulse(*args) -> np.ndarray:
