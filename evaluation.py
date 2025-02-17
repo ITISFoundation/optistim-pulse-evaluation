@@ -1,6 +1,12 @@
-from get_pulse import get_pulse, DURATION, DST, SEGMENT_PW
+import os
+import sys
+
+sys.path.append(os.path.dirname(__file__))
+
+
 import numpy as np
 from pathlib import Path
+from get_pulse import get_pulse, DST
 from s4l_neurofunctions.af.af_data_object import AFDataObject
 from s4l_neurofunctions.af.gaf_calculator import GAFCalculatorHeterogeneous
 from s4l_neurofunctions.af.titration_predictor import TitrationPredictor
