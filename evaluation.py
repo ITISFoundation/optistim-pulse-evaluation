@@ -34,7 +34,7 @@ deactivate_tqdm()
 afdataloaded = AFDataObject(af_type="AF").load(Path(__file__).parent)
 
 
-def evaluator(**kwargs):
+def model(**kwargs):
     print(f"Evaluating Free Pulse for {kwargs}")
     params = [k for k in kwargs.values()]
 
@@ -43,6 +43,14 @@ def evaluator(**kwargs):
         evaluate_energy(params),
         evaluate_maxamp(params),
     )
+
+
+## not defined a-priori in the sinusoid case
+# model.__annotations__.update({"inputs": {f"A{i}": float for i in range(NVARS)}})
+model.__annotations__.update(
+    {"outputs": {"activation": float, "fsi": float, "energy": float, "maxamp": float}}
+)  ## clearly custom-made annotations; do for now until we have the proper function database
+## Users will still need to define inputs & outputs of their python functions when adding them there
 
 
 def evaluate_maxamp(x) -> float:
@@ -93,4 +101,4 @@ def evaluate_energy(x) -> float:
 
 if __name__ == "__main__":
     # print(evaluator(**{f"p{i+1}": 0.0 for i in range(int(DURATION / SEGMENT_PW) - 1)}))
-    print(evaluator(**{"A0": 0.0, "A1": 1.5, "B0": 0.5, "B1": 0.0}))
+    print(model(**{"A0": 0.0, "A1": 1.5, "B0": 0.5, "B1": 0.0}))
