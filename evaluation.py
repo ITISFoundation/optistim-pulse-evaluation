@@ -101,12 +101,6 @@ def evaluate_activation(x) -> float:
 
 def evaluate_energy(x) -> float:
     pulse = get_pulse(*x)
-
-    pulse.plot_pulse()
-    import matplotlib.pyplot as plt
-
-    plt.savefig("_".join(["pulse"] + [f"{xx}" for xx in x]) + ".png")
-
     R = 2e3  ### Have not computed it - I guess I could. R = 1Vdiff/current. But it is just a scale factor, not very important.
     ## total work = sum I^2 * R * dt
     energy = [(i * 1e-3) ** 2 * R * (1 / DST * 1e-3) for i in pulse.amplitude_list]
