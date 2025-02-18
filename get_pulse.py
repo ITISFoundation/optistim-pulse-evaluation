@@ -9,7 +9,7 @@ import numpy as np
 ## therefore, keep using local file
 from stimulation_pulse import StimulationPulse
 
-DST = 100  ## number of time points in a ms -- must match (or be a divisor) of w GAFCalculator DST
+DST = 40  ## number of time points in a ms -- must match (or be a divisor) of w GAFCalculator DST
 SEGMENT_PW = 1 / DST  # Width, in ms, of 1 pulse segment
 DURATION = 1.0
 
@@ -23,15 +23,16 @@ def get_sinusoidal_pulse(*args) -> np.ndarray:
     B = args[N:]
     assert len(A) == len(B), "Number of A and B coefficients must match."
 
-    print("To enforce zero net current, A0 and B0 will be set to 0.")
-    A, B = list(A), list(B)
-    A[0] = 0.0
-    B[0] = 0.0
-
     time_vector = np.linspace(0, DURATION, int(DURATION * DST))
     amps = np.zeros_like(time_vector)
     for j, (a, b) in enumerate(zip(A, B)):
-        omega = 2 * np.pi * j / DURATION
+        f = (j + 1) / DURATION
+        # f=0 (e.g. DC component) is not allowed as it would violate current balance
+        # also, all frequencies produce a integer number of cycles, to ensure charge balance
+        assert (
+            DST >= 2 * f
+        ), f"The maximal frequency {f} is higher than the Nyquist sampling frequency {DST/2}"
+        omega = 2 * np.pi * f
         amps += a * np.cos(omega * time_vector) + b * np.sin(omega * time_vector)
 
     return amps
