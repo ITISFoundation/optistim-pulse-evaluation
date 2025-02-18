@@ -57,4 +57,7 @@ def get_pulse(*args, stds=None) -> StimulationPulse:
 
     pulse_object.finish_pulse(DURATION)
 
+    if stds is None:
+        pulse_object.std_list = None
+
     return pulse_object
