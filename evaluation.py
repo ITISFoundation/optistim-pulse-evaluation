@@ -19,6 +19,7 @@ roots = (
     + ["L4_DL", "L4_DR", "L5_DL", "L5_DR"]
     + ["S1_DL", "S1_DR", "S2_DL", "S2_DR"]
 )
+THRESHOLD = 14.0
 
 
 def deactivate_tqdm():
@@ -75,14 +76,14 @@ def evaluate_activation(x) -> float:
         force_recomputation=True,
         MODE="BruteForce",
     )
-    tp = TitrationPredictor(gafc.gaf_data_object)
-    tp.predict(threshold=14.0)
 
     gafpeaks = gafc.get_peaks().get_gaf_data()
     gafmax = gafpeaks.AF_max.values
-    act = np.mean(sigmoid(gafmax, threshold=14.0, slope=2.0))  # type: ignore
+    act = np.mean(sigmoid(gafmax, threshold=THRESHOLD, slope=2.0))  # type: ignore
 
     ## also get the functional SI
+    tp = TitrationPredictor(gafc.gaf_data_object)
+    tp.predict(threshold=THRESHOLD)
     unit_activations = get_activation_from_titration(
         titration_data=tp.data,
         key_list=roots,

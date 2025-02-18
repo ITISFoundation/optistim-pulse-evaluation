@@ -23,6 +23,10 @@ def get_sinusoidal_pulse(*args) -> np.ndarray:
     B = args[N:]
     assert len(A) == len(B), "Number of A and B coefficients must match."
 
+    print("To enforce zero net current, A0 and B0 will be set to 0.")
+    A[0] = 0.0
+    B[0] = 0.0
+
     time_vector = np.linspace(0, DURATION, int(DURATION * DST))
     amps = np.zeros_like(time_vector)
     for j, (a, b) in enumerate(zip(A, B)):
