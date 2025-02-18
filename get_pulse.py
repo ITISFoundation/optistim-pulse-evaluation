@@ -11,7 +11,7 @@ from stimulation_pulse import StimulationPulse
 
 DST = 100  ## number of time points in a ms -- must match (or be a divisor) of w GAFCalculator DST
 SEGMENT_PW = 1 / DST  # Width, in ms, of 1 pulse segment
-DURATION = 1.0
+DURATION = 10.0
 
 
 def get_sinusoidal_pulse(*args) -> np.ndarray:
@@ -24,6 +24,7 @@ def get_sinusoidal_pulse(*args) -> np.ndarray:
     assert len(A) == len(B), "Number of A and B coefficients must match."
 
     print("To enforce zero net current, A0 and B0 will be set to 0.")
+    A, B = list(A), list(B)
     A[0] = 0.0
     B[0] = 0.0
 
