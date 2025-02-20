@@ -77,7 +77,8 @@ def evaluate_activation(x) -> float:
         MODE="BruteForce",
     )
 
-    gafpeaks = gafc.get_peaks().get_gaf_data()
+    peaks = gafc.get_peaks()
+    gafpeaks = peaks.get_gaf_data()
     gafmax = gafpeaks.AF_max.values
     act = np.mean(sigmoid(gafmax, threshold=THRESHOLD, slope=2.0))  # type: ignore
 
