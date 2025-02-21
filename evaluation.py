@@ -78,12 +78,12 @@ def evaluate_activation(x) -> float:
     )
 
     peaks = gafc.get_peaks()
-    gafpeaks = peaks.get_gaf_data()
-    gafmax = gafpeaks.AF_max.values
+
+    gafmax = peaks.get_gaf_data().AF_max.values
     act = np.mean(sigmoid(gafmax, threshold=THRESHOLD, slope=2.0))  # type: ignore
 
     ## also get the functional SI
-    tp = TitrationPredictor(gafc.gaf_data_object)
+    tp = TitrationPredictor(peaks)
     tp.predict(threshold=THRESHOLD)
     unit_activations = get_activation_from_titration(
         titration_data=tp.data,
