@@ -41,8 +41,9 @@ def remove_mean(xN1):
 
 def get_pulse(*args, stds=None) -> StimulationPulse:
     ### Allow to pass a Path & retrieve that pulse object
-    if len(args) == 1 and isinstance(args[0], Path):
+    if len(args) == 2 and isinstance(args[0], Path) and isinstance(args[1], (int, float)):
         pulse_object = StimulationPulse(args[0])
+        pulse_object.scale_pulse(args[1])
         return pulse_object
     
     ### Otherwise, create a new pulse object based on the amplitudes provided in args.
