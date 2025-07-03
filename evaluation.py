@@ -117,7 +117,7 @@ def evaluate_energy(x) -> float:
             assert pulse.amplitude_list[i] == pulse.amplitude_list[i + 1], "Pulse amplitudes should be constant between time points"
             energy.append(pulse.amplitude_list[i]**2 * R * dt)
     energy = sum(energy)
-    return energy
+    return energy ## Energy in uJ (microjoules), as R is in Ohms and dt in seconds and I in milliamps
 
 
 if __name__ == "__main__":
