@@ -110,7 +110,8 @@ def evaluate_energy(x) -> float:
     ## total work = integral I^2 * R * dt
     energy = []
     for i in range(len(pulse.amplitude_list) - 1):
-        dt = (pulse.time_list[i+1] - pulse.time_list[i]) * 1e-3  # dt [seconds]
+        dt = max((pulse.time_list[i+1] - pulse.time_list[i]) * 1e-3, 1e-12)  # dt [seconds], minimum 1 picosecond
+        dt = np.round(dt, 9)  # round to avoid numerical issues
         if dt == 0:
             continue
         else:
