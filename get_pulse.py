@@ -10,9 +10,9 @@ import numpy as np
 ## therefore, keep using local file
 from stimulation_pulse import StimulationPulse
 
-SEGMENT_PW = 15e-3  # Width, in ms, of 1 pulse segment
+SEGMENT_PW = 20e-3  # Width, in ms, of 1 pulse segment
 DST = int(1 / SEGMENT_PW)  # Points per unit of time (ms)
-DURATION = 0.24  # Duration of the pulse, in ms
+DURATION = 1.0  # Duration of the pulse, in ms
 NVARS = int(DURATION / SEGMENT_PW) - 1
 
 
