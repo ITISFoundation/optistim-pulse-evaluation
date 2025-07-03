@@ -107,8 +107,15 @@ def evaluate_energy(x) -> float:
     # plt.savefig("_".join(["pulse"] + [f"{xx}" for xx in x]) + ".png")
 
     R = 2e3  ### Have not computed it - I guess I could. R = 1Vdiff/current. But it is just a scale factor, not very important.
-    ## total work = sum I^2 * R * dt
-    energy = [(i * 1e-3) ** 2 * R * (1 / DST * 1e-3) for i in pulse.amplitude_list]
+    ## total work = integral I^2 * R * dt
+    energy = []
+    for i in range(len(pulse.amplitude_list) - 1):
+        dt = (pulse.time_list[i+1] - pulse.time_list[i]) * 1e-3  # dt [seconds]
+        if dt == 0:
+            continue
+        else:
+            assert pulse.amplitude_list[i] == pulse.amplitude_list[i + 1], "Pulse amplitudes should be constant between time points"
+            energy.append(pulse.amplitude_list[i]**2 * R * dt)
     energy = sum(energy)
     return energy
 
