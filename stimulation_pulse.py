@@ -28,6 +28,14 @@ class StimulationPulse:
         if filepath is None:
             self._initialize_stimulus()
             self.name = "Empty Pulse"
+                    
+        else:
+            filepath = self._check_path(filepath)
+            self.path = filepath
+            data = self._load(filepath)
+            self.time_list = list(data[0, :])
+            self.amplitude_list = list(data[1, :])
+            self.name = filepath.stem  # file name, without extension
 
     @staticmethod
     def _check_path(filepath: Path) -> Path:
@@ -40,11 +48,11 @@ class StimulationPulse:
 
         return filepath
 
-    def _load(self, filepath: Path) -> None:
+    def _load(self, filepath: Path) -> np.ndarray:
         try:
             data = np.genfromtxt(filepath)
         except Exception:
-            raise ValueError("Could not load pulse at " + filepath)
+            raise ValueError("Could not load pulse at " + str(filepath))
 
         return data
 

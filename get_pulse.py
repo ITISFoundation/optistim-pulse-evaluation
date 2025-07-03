@@ -1,5 +1,6 @@
 import os
 import sys
+from pathlib import Path
 
 sys.path.append(os.path.dirname(__file__))
 
@@ -39,6 +40,12 @@ def remove_mean(xN1):
 
 
 def get_pulse(*args, stds=None) -> StimulationPulse:
+    ### Allow to pass a Path & retrieve that pulse object
+    if len(args) == 1 and isinstance(args[0], Path):
+        pulse_object = StimulationPulse(args[0])
+        return pulse_object
+    
+    ### Otherwise, create a new pulse object based on the amplitudes provided in args.
     assert len(args) == NVARS, (
         "Number of arguments must match the duration of the pulse."
         + f"Currently {len(args)} and {NVARS}"

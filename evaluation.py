@@ -115,5 +115,7 @@ def evaluate_energy(x) -> float:
 
 if __name__ == "__main__":
     print(model.__annotations__)
-    print(model(**{f"p{i+1}": np.random.randn() for i in range(NVARS)}))
+    # print(model(**{f"p{i+1}": np.random.randn() for i in range(NVARS)}))
+    results = model(**{"pulse": Path("typical_test_pulse_scaled_-1.txt")})
+    print(results)
     print("DONE")

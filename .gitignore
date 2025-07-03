@@ -171,3 +171,9 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+### CUSTOM
+GAF_kernels/*
+dakota.rst 
+*.dat
